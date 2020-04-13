@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+
+    
+
+    
+    <title>tf.boys之Tensorflow笔记【三】 | TakumiWzy的博客</title>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="keywords" content="tf.boys(Tensorflow)笔记">
+    
+    <meta name="description" content="VGG与FCN网络学习又到了周末时间了，本周主要将VGG16，19（按照网上说明数字表示其网络的层数）用于分类网络的结构原理给弄明白了，并且按照其网络结构自己敲了一遍VGG16的网络，并且对Cifar10数据进行了分类。感觉过程中遇到一些问题，有的是很小的毛病，有的是很容易犯的问题，有时候遇到问题还是要多去网上查阅一些相关博客或者是官方给出的说明文件，这样可以尽可能地减少走弯路的次数。另外并将FC">
+<meta name="keywords" content="tf.boys(Tensorflow)笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="tf.boys之Tensorflow笔记【三】">
+<meta property="og:url" content="http://yoursite.com/2019/04/06/tf-boys之Tensorflow笔记【三】/index.html">
+<meta property="og:site_name" content="TakumiWzy的博客">
+<meta property="og:description" content="VGG与FCN网络学习又到了周末时间了，本周主要将VGG16，19（按照网上说明数字表示其网络的层数）用于分类网络的结构原理给弄明白了，并且按照其网络结构自己敲了一遍VGG16的网络，并且对Cifar10数据进行了分类。感觉过程中遇到一些问题，有的是很小的毛病，有的是很容易犯的问题，有时候遇到问题还是要多去网上查阅一些相关博客或者是官方给出的说明文件，这样可以尽可能地减少走弯路的次数。另外并将FC">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-04-18T09:50:04.018Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="tf.boys之Tensorflow笔记【三】">
+<meta name="twitter:description" content="VGG与FCN网络学习又到了周末时间了，本周主要将VGG16，19（按照网上说明数字表示其网络的层数）用于分类网络的结构原理给弄明白了，并且按照其网络结构自己敲了一遍VGG16的网络，并且对Cifar10数据进行了分类。感觉过程中遇到一些问题，有的是很小的毛病，有的是很容易犯的问题，有时候遇到问题还是要多去网上查阅一些相关博客或者是官方给出的说明文件，这样可以尽可能地减少走弯路的次数。另外并将FC">
+    
+
+    
+        <link rel="alternate" href="https://blog.csdn.net/KID_yuan" title="TakumiWzy的博客" type="application/atom+xml">
+    
+
+    
+        <link rel="icon" href="/images/plane.png">
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/libs/titillium-web/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/libs/jquery/3.4.1/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+    
+    
+    
+    
+
+
+</head>
+</html>
+<body>
+    <div id="wrap">
+        <header id="header">
+    <div id="header-outer" class="outer">
+        <div class="container">
+            <div class="container-inner">
+                <div id="header-title">
+                    <h1 class="logo-wrap">
+                        <a href="/" class="logo"></a>
+                    </h1>
+                    
+                </div>
+                <div id="header-inner" class="nav-container">
+                    <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+                    <div class="nav-container-inner">
+                        <ul id="main-nav">
+                            
+                                <li class="main-nav-list-item">
+                                    <a class="main-nav-list-link" href="/">主页</a>
+                                </li>
+                            
+                                        <ul class="main-nav-list"><li class="main-nav-list-item"><a class="main-nav-list-link" href="/categories/Python爬虫/">Python爬虫</a></li><li class="main-nav-list-item"><a class="main-nav-list-link" href="/categories/tf-boys-Tensorflow/">tf.boys(Tensorflow)</a></li><li class="main-nav-list-item"><a class="main-nav-list-link" href="/categories/科技随想/">科技随想</a></li><li class="main-nav-list-item"><a class="main-nav-list-link" href="/categories/随笔/">随笔</a></li></ul>
+                                    
+                                <li class="main-nav-list-item">
+                                    <a class="main-nav-list-link" href="/about/index.html">关于</a>
+                                </li>
+                            
+                        </ul>
+                        <nav id="sub-nav">
+                            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索">
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="想要查找什么...">
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+        <div class="container">
+            <div class="main-body container-inner">
+                <div class="main-body-inner">
+                    <section id="main">
+                        <div class="main-body-header">
+    <h1 class="header">
+    
+    <a class="page-title-link" href="/categories/tf-boys-Tensorflow/">tf.boys(Tensorflow)</a>
+    </h1>
+</div>
+
+                        <div class="main-body-content">
+                            <article id="post-tf-boys之Tensorflow笔记【三】" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+        tf.boys之Tensorflow笔记【三】
+        </h1>
+    
+
+            </header>
+        
+        
+            <div class="article-meta">
+                
+    <div class="article-date">
+      <i class="fa fa-calendar"></i>
+      <a href="/2019/04/06/tf-boys之Tensorflow笔记【三】/" class="article-date">
+         <time datetime="2019-04-06T06:48:38.000Z" itemprop="datePublished">2019-04-06</time>
+      </a>
+    </div>
+
+
+                
+
+                
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/tf-boys-Tensorflow-笔记/">tf.boys(Tensorflow)笔记</a>
+    </div>
+
+                
+
+                
+
+            </div>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+            <h1 id="VGG与FCN网络学习"><a href="#VGG与FCN网络学习" class="headerlink" title="VGG与FCN网络学习"></a>VGG与FCN网络学习</h1><p>又到了周末时间了，本周主要将VGG16，19（按照网上说明数字表示其网络的层数）用于分类网络的结构原理给弄明白了，并且按照其网络结构自己敲了一遍VGG16的网络，并且对Cifar10数据进行了分类。感觉过程中遇到一些问题，有的是很小的毛病，有的是很容易犯的问题，有时候遇到问题还是要多去网上查阅一些相关博客或者是官方给出的说明文件，这样可以尽可能地减少走弯路的次数。另外并将FCN用于图像分割的全卷积网络效果给实现了一下，感觉效果不是很好，主要是有几个原因，首先电脑的显卡1050Ti就只有4G显存，训练网络都跑得有点呛【咳咳，早知道当时多花一点钱追求一下需求好了，不过，感觉显卡永远是满足不了需求的：）】</p>
+<h2 id="1-VGG遇到的问题："><a href="#1-VGG遇到的问题：" class="headerlink" title="1.VGG遇到的问题："></a>1.VGG遇到的问题：</h2><h3 id="1-1数据获取及one-hot："><a href="#1-1数据获取及one-hot：" class="headerlink" title="1.1数据获取及one_hot："></a>1.1数据获取及one_hot：</h3><p>由于之前一直用的是mnist，里面已经有封装好的数据读取以及next_batch函数，非常方便，只需要了解其接口函数，直接拿来使用就行了，不用管数据是怎么实现进行读取和操作的，但是如果想自己实现分类一些不仅仅限制于手写字符的图片，那么就需要自己掌握以下几种图像的数据读取方式了。</p>
+<p>我用的是cifar10数据集，但是没用TensorFlow给出的封装形式，自己在网上下载了python版本的batch文件，之后采用了<code>#pickle读取cifar10数据</code>。最后可以返回数据标签和其图像数据。其中由于Cifar10中的数据是以字典形式对应各个标签，其一共10类（1~10），如果在VGG训练过程中利用tf.nn.softmax_cross_entropy计算时需要注意将其转换为one_hot形式，其中TensorFlow给出了<code>tf.one_hot(y,c)</code>以供选择。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">filename=<span class="string">r'F:\pythonwork\VggTest\data\cifar-10-python\cifar-10-batches-py\data_batch_1'</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">labels_data</span><span class="params">(filename)</span>:</span></span><br><span class="line">    <span class="keyword">if</span>  filename:</span><br><span class="line">        <span class="keyword">with</span> open(filename,<span class="string">'rb'</span>) <span class="keyword">as</span> fo:</span><br><span class="line">            data = pickle.load(fo,encoding=<span class="string">'latin1'</span>)</span><br><span class="line">            <span class="comment">#查看一下pickle文件的字典形式</span></span><br><span class="line">            print(data1.keys())</span><br><span class="line">            pictures=data[<span class="string">'data'</span>]</span><br><span class="line">            labels=data[<span class="string">'labels'</span>]</span><br><span class="line">            <span class="keyword">return</span>  labels,pictures</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            print(<span class="string">"The data isn't exist!!!"</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="1-2-训练过程中网络误差损失Loss一直为Nan"><a href="#1-2-训练过程中网络误差损失Loss一直为Nan" class="headerlink" title="1.2.训练过程中网络误差损失Loss一直为Nan"></a>1.2.训练过程中网络误差损失Loss一直为Nan</h3><p>我在网上查阅了相关博客之后，发现是主要由于两个原因：除0或者Log(0)，这两个步骤主要在求交叉熵代价函数时会涉及到，那么，可以根据需要将其避免出现0的情况，可以采用函数：<code>tf.clip_by_value(y,min,max)</code>将Y的值域限制在最小值和最大值之间，从而避免出现0的情况。</p>
+<h3 id="1-3-交叉熵计算函数的封装的计算方法"><a href="#1-3-交叉熵计算函数的封装的计算方法" class="headerlink" title="1.3.交叉熵计算函数的封装的计算方法"></a>1.3.交叉熵计算函数的封装的计算方法</h3><blockquote>
+<p>通常在训练标签数据时，将y表示为网络输出结果，y_表示为标准答案。</p>
+<p>两个方法都已经封装好了softmax，因此直接将网络输出结果代入。</p>
+</blockquote>
+<p>第一种：<code>tf.nn.sparse_softmax_cross_entropy_with_logits(logits, labels, name=None)</code></p>
+<p>labels参数要注意，且在labels中的每个值必须是在[0，num_classes)，它的shape必须是<code>[d_0, d_1, ..., d_{r-1}]&#39;（即batch_size的大小），而参数logits的shape是[d_0, d_1, ..., d_{r-1},num_classes]</code>数据类型必须是int32或者int64，否则在这个操作运行在cpu的时候将会出现exception，运行在GPU的时候将会返回’NaN’,而不是返回loss了，所以在看到输出的不是loss值而是‘NaN’时就应该仔细检查一下这个函数中的labels有没有符合条件）。</p>
+<p>第二种：<code>tf.nn.softmax_cross_entropy_with_logits(logits, labels, name=None)</code></p>
+<p>logits和labels的shape都是[batch_size, num_classes]。数据类型可以是float16 ，<code>float32</code> or <code>float64</code>.），是标签的onehot向量参与计算。softmax_cross_entropy_with_logits 的 labels 是 sparse_softmax_cross_entropy_with_logits 的 labels 的一个独热版本（one hot version）。</p>
+<blockquote>
+<p>以分10类情况，训练时的batch size为batch_num</p>
+<p>（1） 则若使用 softmax_cross_entropy_with_logits， 则其labels参数需要是一个[batch_size, 10]的矩阵，其中每行代表一个instance, 是one hot的形式，其非0 index代表属于哪一类。</p>
+<p>（2）若使用sparse_softmax_cross_entropy_with_logits， 则其Labels参数是一个[batch_size]的列，里面每个属于0到9中间的整数，代表类别，所以函数名称加了sparse, 类似稀疏表示。</p>
+</blockquote>
+<h2 id="2-FCN遇到的问题："><a href="#2-FCN遇到的问题：" class="headerlink" title="2.FCN遇到的问题："></a>2.FCN遇到的问题：</h2><p>在训练时GPU给张量分配空间时总是显示OMM即读取数据时卡死：OOM when allocating tensor with shape[2,151,4096,4096] and type float on/job:localhost/replica:0/task:0/device:GPU:0 by allocator GPU_0_bfc之类的，提示说在分配张量时显卡的内存不足（OOM，即Out of Memory）。</p>
+<h3 id="可以从几个方面考虑："><a href="#可以从几个方面考虑：" class="headerlink" title="可以从几个方面考虑："></a>可以从几个方面考虑：</h3><h4 id="2-1-减小Batch-size训练批次数目（然而我的以及设置为2已经很小了）"><a href="#2-1-减小Batch-size训练批次数目（然而我的以及设置为2已经很小了）" class="headerlink" title="2.1.减小Batch_size训练批次数目（然而我的以及设置为2已经很小了）"></a>2.1.减小Batch_size训练批次数目（然而我的以及设置为2已经很小了）</h4><h4 id="2-2-减小训练图片的尺寸大小，源尺寸可以看见时224-224的（原因时由于经过5次pooling-后得到的图片为原来大小的1-32，这个尺寸的方便处理）但是FCN由于网络的设计是可以输入任意尺寸的图片的。所以可以尽可能将原图片尺寸调小。"><a href="#2-2-减小训练图片的尺寸大小，源尺寸可以看见时224-224的（原因时由于经过5次pooling-后得到的图片为原来大小的1-32，这个尺寸的方便处理）但是FCN由于网络的设计是可以输入任意尺寸的图片的。所以可以尽可能将原图片尺寸调小。" class="headerlink" title="2.2.减小训练图片的尺寸大小，源尺寸可以看见时224*224的（原因时由于经过5次pooling 后得到的图片为原来大小的1/32，这个尺寸的方便处理）但是FCN由于网络的设计是可以输入任意尺寸的图片的。所以可以尽可能将原图片尺寸调小。"></a>2.2.减小训练图片的尺寸大小，源尺寸可以看见时224*224的（原因时由于经过5次pooling 后得到的图片为原来大小的1/32，这个尺寸的方便处理）但是FCN由于网络的设计是可以输入任意尺寸的图片的。所以可以尽可能将原图片尺寸调小。</h4><h4 id="2-3-缩减网络的复杂程度，因为在网络最后会收集参数，最后参数数量以百万级，所以，可以根据自己调整的图片大小，同时调整网络各层输出的特征图数目（即卷积核深度）。"><a href="#2-3-缩减网络的复杂程度，因为在网络最后会收集参数，最后参数数量以百万级，所以，可以根据自己调整的图片大小，同时调整网络各层输出的特征图数目（即卷积核深度）。" class="headerlink" title="2.3.缩减网络的复杂程度，因为在网络最后会收集参数，最后参数数量以百万级，所以，可以根据自己调整的图片大小，同时调整网络各层输出的特征图数目（即卷积核深度）。"></a>2.3.缩减网络的复杂程度，因为在网络最后会收集参数，最后参数数量以百万级，所以，可以根据自己调整的图片大小，同时调整网络各层输出的特征图数目（即卷积核深度）。</h4>
+        </div>
+        <footer class="article-footer">
+            
+
+
+
+    <a data-url="http://yoursite.com/2019/04/06/tf-boys之Tensorflow笔记【三】/" data-id="ck8y0x4pj0009jwvv3rxuibpb" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+        </footer>
+    </div>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "author": {
+            "@type": "Person",
+            "name": "TakumiWzy"
+        },
+        "headline": "tf.boys之Tensorflow笔记【三】",
+        "image": "http://yoursite.com",
+        "keywords": "tf.boys(Tensorflow)笔记",
+        "genre": "tf.boys(Tensorflow)",
+        "datePublished": "2019-04-06",
+        "dateCreated": "2019-04-06",
+        "dateModified": "2019-04-18",
+        "url": "http://yoursite.com/2019/04/06/tf-boys之Tensorflow笔记【三】/",
+        "description": "VGG与FCN网络学习又到了周末时间了，本周主要将VGG16，19（按照网上说明数字表示其网络的层数）用于分类网络的结构原理给弄明白了，并且按照其网络结构自己敲了一遍VGG16的网络，并且对Cifar10数据进行了分类。感觉过程中遇到一些问题，有的是很小的毛病，有的是很容易犯的问题，有时候遇到问题还是要多去网上查阅一些相关博客或者是官方给出的说明文件，这样可以尽可能地减少走弯路的次数。另外并将FC",
+        "wordCount": 251
+    }
+</script>
+
+</article>
+
+    <section id="comments">
+    
+        
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+
+
+    
+    </section>
+
+
+
+                        </div>
+                    </section>
+                    <aside id="sidebar">
+    <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+    <div class="sidebar-top">
+        <p>关注我 :</p>
+        <ul class="social-links">
+            
+                
+                <li>
+                    <a class="social-tooltip" title="github" href="https://github.com/TakumiWzy" target="_blank" rel="noopener">
+                        <i class="icon fa fa-github"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="rss" href="https://blog.csdn.net/KID_yuan" target="_blank" rel="noopener">
+                        <i class="icon fa fa-rss"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="weibo" href="https://www.weibo.com/ziyuanwow" target="_blank" rel="noopener">
+                        <i class="icon fa fa-weibo"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="twitter" href="https://twitter.com/TakumiDi" target="_blank" rel="noopener">
+                        <i class="icon fa fa-twitter"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="tv" href="https://space.bilibili.com/25242571" target="_blank" rel="noopener">
+                        <i class="icon fa fa-tv"></i>
+                    </a>
+                </li>
+                
+            
+        </ul>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+        <a href="/2019/04/06/博客配置相关/" id="article-nav-newer" class="article-nav-link-wrap">
+        <strong class="article-nav-caption">下一篇</strong>
+        <p class="article-nav-title">
+        
+            博客配置相关
+        
+        </p>
+        <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+    
+    
+        <a href="/2019/03/23/tf-boys之Tensorflow笔记【二】/" id="article-nav-older" class="article-nav-link-wrap">
+        <strong class="article-nav-caption">上一篇</strong>
+        <p class="article-nav-title">tf-boys之Tensorflow笔记【二】</p>
+        <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+        </a>
+    
+</nav>
+
+    
+    <div class="widgets-container">
+        
+            
+                
+
+            
+                
+    <div class="widget-wrap">
+        <h3 class="widget-title">最新文章</h3>
+        <div class="widget">
+            <ul id="recent-post" class>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2019/05/16/科技幻想篇【三】之全息影像AI/" class="thumbnail">
+    
+    
+        <span style="background-image:url(/images/gatebox6.gif)" alt="科技幻想篇【三】之全息影像AI" class="thumbnail-image"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/科技随想/">科技随想</a></p>
+                            <p class="item-title"><a href="/2019/05/16/科技幻想篇【三】之全息影像AI/" class="title">科技幻想篇【三】之全息影像AI</a></p>
+                            <p class="item-date"><time datetime="2019-05-16T04:35:04.000Z" itemprop="datePublished">2019-05-16</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2019/05/12/Python爬虫【三】静态html网页图片下载/" class="thumbnail">
+    
+    
+        <span style="background-image:url(/images/anime1.PNG)" alt="Python爬虫【三】静态html网页图片下载" class="thumbnail-image"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Python爬虫/">Python爬虫</a></p>
+                            <p class="item-title"><a href="/2019/05/12/Python爬虫【三】静态html网页图片下载/" class="title">Python爬虫【三】静态html网页图片下载</a></p>
+                            <p class="item-date"><time datetime="2019-05-12T03:52:30.000Z" itemprop="datePublished">2019-05-12</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2019/05/11/Python爬虫【二】BeautifulSoup库的使用/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Python爬虫/">Python爬虫</a></p>
+                            <p class="item-title"><a href="/2019/05/11/Python爬虫【二】BeautifulSoup库的使用/" class="title">Python爬虫【二】BeautifulSoup库的使用</a></p>
+                            <p class="item-date"><time datetime="2019-05-11T04:42:44.000Z" itemprop="datePublished">2019-05-11</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2019/05/11/Python爬虫【一】requests库的使用/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Python爬虫/">Python爬虫</a></p>
+                            <p class="item-title"><a href="/2019/05/11/Python爬虫【一】requests库的使用/" class="title">Python爬虫【一】requests库的使用</a></p>
+                            <p class="item-date"><time datetime="2019-05-11T04:40:07.000Z" itemprop="datePublished">2019-05-11</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2019/05/01/复仇者联盟四观影感/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2019/05/01/复仇者联盟四观影感/" class="title">复仇者联盟四观影感</a></p>
+                            <p class="item-date"><time datetime="2019-05-01T02:04:25.000Z" itemprop="datePublished">2019-05-01</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">分类</h3>
+        <div class="widget">
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Python爬虫/">Python爬虫</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tf-boys-Tensorflow/">tf.boys(Tensorflow)</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/科技随想/">科技随想</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/随笔/">随笔</a><span class="category-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">归档</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">4</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">标签</h3>
+        <div class="widget">
+            <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python爬虫/">Python爬虫</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tf-boys-Tensorflow-笔记/">tf.boys(Tensorflow)笔记</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/二次元/">二次元</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/博客配置相关/">博客配置相关</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/机器学习/">机器学习</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/生活感悟/">生活感悟</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/电影杂谈/">电影杂谈</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/科技宅/">科技宅</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/科研感悟/">科研感悟</a><span class="tag-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-float">
+        <h3 class="widget-title">标签云</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/Python爬虫/" style="font-size: 15px;">Python爬虫</a> <a href="/tags/tf-boys-Tensorflow-笔记/" style="font-size: 20px;">tf.boys(Tensorflow)笔记</a> <a href="/tags/二次元/" style="font-size: 10px;">二次元</a> <a href="/tags/博客配置相关/" style="font-size: 10px;">博客配置相关</a> <a href="/tags/机器学习/" style="font-size: 10px;">机器学习</a> <a href="/tags/生活感悟/" style="font-size: 20px;">生活感悟</a> <a href="/tags/电影杂谈/" style="font-size: 10px;">电影杂谈</a> <a href="/tags/科技宅/" style="font-size: 10px;">科技宅</a> <a href="/tags/科研感悟/" style="font-size: 10px;">科研感悟</a>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">链接</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="http://hexo.io">Hexo</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+            
+        
+    </div>
+</aside>
+
+                </div>
+            </div>
+        </div>
+        <footer id="footer">
+    <div class="container">
+        <div class="container-inner">
+            <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+            <div class="credit">
+                <h1 class="logo-wrap">
+                    <a href="/" class="logo"></a>
+                </h1>
+                <p>&copy; 2020 TakumiWzy</p>
+                
+                <p>Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>. Theme by <a href="https://github.com/ppoffice" target="_blank">PPOffice</a></p>
+                
+            </div>
+            <div class="footer-plugins">
+              
+    
+
+
+            </div>
+        </div>
+    </div>
+</footer>
+
+        
+    
+    <script>
+    var disqus_shortname = 'hueman';
+    
+    
+    var disqus_url = 'http://yoursite.com/2019/04/06/tf-boys之Tensorflow笔记【三】/';
+    
+    (function() {
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+    </script>
+
+
+
+
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+    
+        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    
+    
+
+    
+    
+
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+<script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/assets/hijiki.model.json"},"display":{"position":"right","width":108,"height":180},"mobile":{"show":true},"log":false});</script></body>
+</html>
